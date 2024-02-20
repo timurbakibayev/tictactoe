@@ -1,0 +1,60 @@
+.app {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    background-color: #f4f4f4;
+}
+
+.game {
+    position: absolute;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    height: 400px;
+    width: 400px;
+}
+
+.row {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.o::after {
+    content: "O";
+}
+
+.x::after {
+    content: "X";
+}
+
+.line {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5em;
+    color: #f00;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+/*idea: background-image with animated line in SVG format*/
+/*line0... line8 would transform and rotate*/
+
+.line0 {
+
+}
