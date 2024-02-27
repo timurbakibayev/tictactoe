@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>TicTacToe</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
@@ -40,21 +40,47 @@
     </div>
 
 <script>
-    let array = [
+    let board = [
         [null, null, null],
         [null, null, null],
         [null, null, null]
     ];
     let current_player = 'x';
-    const play_cell = (row, col) => {
-        if (array[row][col] !== null) {
-            return;
+    const play_cell = async (row, col) => {
+
+        const result = await fetch('/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                row: row,
+                col: col,
+                board: board,
+            })
+        });
+
+        console.log(result);
+        const data = await result.json();
+        let cell = null;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                board[i][j] = data.board[i][j];
+                cell = document.getElementById('a' + row + col);
+                if (data.board[i][j] !== null) {
+                    cell.classList.add(data.board[i][j]);
+                    console.log(data.board[i][j], i, j);
+                }
+            }
         }
-        const cell = document.getElementById('a' + row + col);
-        cell.classList.add(current_player);
-        array[row][col] = current_player;
-        current_player = current_player === 'x' ? 'o' : 'x';
-        check_game();
+        console.log(board);
+        current_player = data.turn;
+        if (result.draw_line) {
+            drawLine(result.draw_line[0], result.draw_line[1], result.draw_line[2], result.draw_line[3]);
+        }
+        if (result.message) {
+            swal(result.message);
+        }
     }
 
     const drawLine = (x1, y1, x2, y2) => {
@@ -85,31 +111,31 @@
         let draw = true;
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                if (array[i][j] === null) {
+                if (board[i][j] === null) {
                     draw = false;
                 }
             }
         }
         for (let i = 0; i < 3; i++) {
-            if (array[i][0] === array[i][1] && array[i][1] === array[i][2] && array[i][0] !== null) {
-                console.log(array[i][0] + ' wins');
-                who_won = array[i][0];
+            if (board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][0] !== null) {
+                console.log(board[i][0] + ' wins');
+                who_won = board[i][0];
                 drawLine(10, 33/2 + i * 33, 90, 33/2 + i * 33);
             }
-            if (array[0][i] === array[1][i] && array[1][i] === array[2][i] && array[0][i] !== null) {
-                console.log(array[0][i] + ' wins');
-                who_won = array[0][i];
+            if (board[0][i] === board[1][i] && board[1][i] === board[2][i] && board[0][i] !== null) {
+                console.log(board[0][i] + ' wins');
+                who_won = board[0][i];
                 drawLine(33/2 + i * 33, 10, 33/2 + i * 33, 90);
             }
         }
-        if (array[0][0] === array[1][1] && array[1][1] === array[2][2] && array[0][0] !== null) {
-            console.log(array[0][0] + ' wins');
-            who_won = array[0][0];
+        if (board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0] !== null) {
+            console.log(board[0][0] + ' wins');
+            who_won = board[0][0];
             drawLine(10, 10, 90, 90);
         }
-        if (array[0][2] === array[1][1] && array[1][1] === array[2][0] && array[0][2] !== null) {
-            console.log(array[0][2] + ' wins');
-            who_won = array[0][2];
+        if (board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[0][2] !== null) {
+            console.log(board[0][2] + ' wins');
+            who_won = board[0][2];
             drawLine(90, 10, 10, 90);
         }
         if (draw) {
